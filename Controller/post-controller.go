@@ -13,7 +13,18 @@ var (
 	postService service.PostService = service.NewPostService()
 )
 
-func GetPosts(w http.ResponseWriter, r *http.Request) {
+type PostController interface {
+	GetPosts(w http.ResponseWriter, r *http.Request)
+	AddPost(w http.ResponseWriter, r *http.Request)
+}
+
+type postControllerStruct struct{}
+
+func NewPostController() PostController {
+	return &postControllerStruct{}
+}
+
+func (*postControllerStruct) GetPosts(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-type", "application/json")
 	posts, err := postService.FindAll()
 	if err != nil {
@@ -26,7 +37,7 @@ func GetPosts(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(posts)
 }
 
-func AddPost(w http.ResponseWriter, r *http.Request) {
+func (*postControllerStruct) AddPost(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-type", "application/json")
 	var post entity.Post
 	err := json.NewDecoder(r.Body).Decode(&post)
