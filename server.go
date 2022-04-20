@@ -6,11 +6,15 @@ import (
 
 	controller "github.com/epileftro85/goapi/Controller"
 	router "github.com/epileftro85/goapi/Http"
+	repository "github.com/epileftro85/goapi/Repository"
+	service "github.com/epileftro85/goapi/Service"
 )
 
 var (
 	httpRouter     router.Router             = router.NewChiRouter()
-	postController controller.PostController = controller.NewPostController()
+	postRepos      repository.PostRepository = repository.NewFirestoreRepository()
+	postService    service.PostService       = service.NewPostService(postRepos)
+	postController controller.PostController = controller.NewPostController(postService)
 )
 
 func main() {
